@@ -1,59 +1,72 @@
-@extends('dashboard.master')
+@extends('layouts/app')
 
 @section('content')
-<div class="container mx-auto p-6">
-    <h1 class="text-3xl font-bold text-white mb-6">Agregar Alumnos al Grupo: {{ $group->name }}</h1>
+<div class="container-fluid px-4">
+    <h1 class="mt-4 text-primary">Agregar Alumnos al Grupo: {{ $group->name }}</h1>
 
     @if (session('success'))
-        <div class="bg-green-500 text-white text-center py-2 px-4 rounded-md mb-4">
+        <div class="alert alert-success text-center mt-4" role="alert">
             {{ session('success') }}
         </div>
     @endif
 
-    <form method="GET" action="{{ route('groups.addAlumnosForm', $group->id) }}" class="flex mb-6">
-        <input type="text" name="search" class="flex-1 px-4 py-2 rounded-l-lg focus:outline-none" placeholder="Buscar por correo electrónico" value="{{ request('search') }}">
-        <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-r-lg hover:bg-blue-700">
+    <!-- Buscar Alumnos -->
+    <form method="GET" action="{{ route('groups.addAlumnosForm', $group->id) }}" class="input-group mb-4 mt-4">
+        <input type="text" name="search" class="form-control" placeholder="Buscar por correo electrónico" value="{{ request('search') }}">
+        <button type="submit" class="btn btn-primary">
             Buscar
         </button>
     </form>
 
-    <form action="{{ route('groups.importAlumnosPhpSpreadsheet', $group->id) }}" method="POST" enctype="multipart/form-data" class="bg-gray-800 rounded-lg p-6 shadow-lg mb-6">
-        @csrf
-        <div class="mb-4">
-            <label for="file" class="block text-white font-semibold mb-2">Cargar Archivo Excel</label>
-            <input type="file" name="file" id="file" class="w-full px-4 py-2 rounded-lg text-gray-900 bg-white" required>
-            <small class="text-gray-400">Asegúrate de que el archivo sea un formato válido (.xlsx, .xls).</small>
+    <!-- Importar Alumnos desde Archivo Excel -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-dark text-white">
+            <h2 class="card-title mb-0">Cargar Archivo Excel</h2>
         </div>
-    
-        <button type="submit" class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700">
-            Importar Alumnos
-        </button>
-    </form>
-    
-
-    <form action="{{ route('groups.addAlumnos', $group->id) }}" method="POST" class="bg-gray-800 rounded-lg p-6 shadow-lg">
-        @csrf
-
-        <div class="mb-4">
-            <label for="alumnos" class="block text-white font-semibold mb-2">Selecciona Alumnos para Agregar</label>
-            <select name="alumnos[]" id="alumnos" class="w-full px-4 py-2 rounded-lg text-gray-900" multiple required>
-                @foreach ($alumnos as $alumno)
-                    <option value="{{ $alumno->id }}">{{ $alumno->name }} ({{ $alumno->email }})</option>
-                @endforeach
-            </select>
-            <small class="text-gray-400">Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples alumnos.</small>
+        <div class="card-body">
+            <form action="{{ route('groups.importAlumnosPhpSpreadsheet', $group->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="mb-3">
+                    <label for="file" class="form-label text-muted">Cargar Archivo Excel</label>
+                    <input type="file" name="file" id="file" class="form-control" required>
+                    <small class="form-text text-muted">Asegúrate de que el archivo sea un formato válido (.xlsx, .xls).</small>
+                </div>
+                <button type="submit" class="btn btn-success">
+                    Importar Alumnos
+                </button>
+            </form>
         </div>
+    </div>
 
-        <div class="flex space-x-4 mt-4">
-            <button type="submit" class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700">
-                Agregar Alumnos
-            </button>
-            <a href="{{ route('groups.show', $group->id) }}" class="px-4 py-2 bg-gray-600 text-white font-semibold rounded-lg shadow hover:bg-gray-700">
-                Cancelar
-            </a>
+    <!-- Agregar Alumnos al Grupo -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white">
+            <h2 class="card-title mb-0">Selecciona Alumnos para Agregar</h2>
         </div>
-    </form>
+        <div class="card-body">
+            <form action="{{ route('groups.addAlumnos', $group->id) }}" method="POST">
+                @csrf
+
+                <div class="mb-4">
+                    <label for="alumnos" class="form-label text-muted">Selecciona Alumnos para Agregar</label>
+                    <select name="alumnos[]" id="alumnos" class="form-select" multiple required>
+                        @foreach ($alumnos as $alumno)
+                            <option value="{{ $alumno->id }}">{{ $alumno->name }} ({{ $alumno->email }})</option>
+                        @endforeach
+                    </select>
+                    <small class="form-text text-muted">Mantén presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples alumnos.</small>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-success">
+                        Agregar Alumnos
+                    </button>
+                    <a href="{{ route('groups.show', $group->id) }}" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
-
-

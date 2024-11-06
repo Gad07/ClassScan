@@ -1,53 +1,66 @@
-@extends('dashboard.master')
+@extends('layouts.app')
+
+@section('title', 'Lista de Grupos')
 
 @section('content')
-<div class="container mx-auto p-6">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-black">Lista de Grupos</h1>
-        @if(Auth::user()->isProfesor())
-            <!-- Solo los profesores pueden crear un nuevo grupo -->
-            <a href="{{ route('groups.create') }}" class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow hover:bg-green-700">
-                + Crear Nuevo Grupo
-            </a>
-        @endif
-    </div>
-
-    <div class="bg-blue-200 shadow-lg rounded-lg overflow-hidden">
-        <div class="p-6">
+<div class="container-fluid px-4">
+    <div class="card mb-4 shadow-lg border-0">
+        <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+            <h3 class="mb-0 text-center">Lista de Grupos</h3>
+            @if(Auth::user()->isProfesor())
+                <!-- Solo los profesores pueden crear un nuevo grupo -->
+                <a href="{{ route('groups.create') }}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Crear Nuevo Grupo
+                </a>
+            @endif
+        </div>
+        <div class="card-body">
             @if($groups->isEmpty())
-                <div class="bg-yellow-500 text-white text-center p-4 rounded-md">
-                    No hay grupos disponibles.
+                <div class="alert alert-warning text-center">
+                    <strong>No hay grupos disponibles.</strong>
                 </div>
             @else
-                <ul class="divide-y divide-gray-700">
+                <div class="list-group">
                     @foreach($groups as $group)
-                        <li class="flex justify-between items-center p-4 bg-white hover:bg-gray-600 rounded-md mb-3">
-                            
-                            <a href="{{ route('groups.show', $group->id) }}" class="text-lg font-semibold text-black hover:underline">
-                                <i class="fas fa-users mr-2"></i>{{ $group->name }}
+                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-3 p-3 shadow-sm">
+                            <a href="{{ route('groups.show', $group->id) }}" class="h5 mb-0 text-dark">
+                                <i class="fas fa-users me-2"></i>{{ $group->name }}
                             </a>
-                            
                             @if(Auth::user()->isProfesor())
-                                
-                                <div class="flex space-x-2">
-                                    
-                                    <a href="{{ route('groups.edit', $group->id) }}" class="px-3 py-1 bg-blue-500 text-white text-sm font-semibold rounded hover:bg-blue-600">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </a>
-                                    
-                                    
-                                    <form action="{{ route('groups.destroy', $group->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este grupo?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="px-3 py-1 bg-red-500 text-white text-sm font-semibold rounded hover:bg-red-600">
-                                            <i class="fas fa-trash-alt"></i> Eliminar
-                                        </button>
-                                    </form>
+                            <div class="btn-group">
+                                <!-- Botón Editar -->
+                                <a href="{{ route('groups.edit', $group->id) }}" class="btn btn-outline-primary btn-sm me-2">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ $group->id }}">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            </div>
+
+                            <!-- Modal de Confirmación para Eliminar -->
+                            <div class="modal fade" id="confirmDeleteModal-{{ $group->id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel-{{ $group->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-sm">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            <p class="mb-0">¿Estás seguro de que deseas eliminar el grupo <strong>{{ $group->name }}</strong>? Esta acción no se puede deshacer.</p>
+                                        </div>
+                                        <div class="modal-footer py-2">
+                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <form action="{{ route('groups.destroy', $group->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
+                            
                             @endif
-                        </li>
+                        </div>
                     @endforeach
-                </ul>
+                </div>
             @endif
         </div>
     </div>

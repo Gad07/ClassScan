@@ -19,6 +19,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\ShareNotifications::class, // Middleware agregado para compartir notificaciones globalmente
     ];
 
     /**
@@ -36,6 +37,8 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\CheckRole::class,
+            \App\Http\Middleware\ShareNotifications::class, // Añadir aquí el middleware
+
         ],
 
         'api' => [
@@ -44,6 +47,7 @@ class Kernel extends HttpKernel
         ],
     ];
 
+    
     /**
      * Middleware de ruta individual.
      *
@@ -59,9 +63,6 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-
-        // Aquí es donde agregas tu middleware `role`
-        // 'test' => \App\Http\Middleware\TestMiddleware::class,
         'role' => \App\Http\Middleware\CheckRole::class,
     ];
 }
