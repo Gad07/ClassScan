@@ -9,7 +9,7 @@
             <div class="col-6 text-end">
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">
-                        <a href="{{ url('/privacy-policy') }}" class="text-light">Política de privacidad</a>
+                        <a href="{{ url('/terms') }}" class="text-light">Política de privacidad</a>
                     </li>
                     <li class="list-inline-item">
                         <a href="{{ url('/terms') }}" class="text-light">Términos de servicio</a>

@@ -67,9 +67,15 @@
                 <div class="dropdown-menu dropdown-menu-end">
                     <a class="dropdown-item" href="/perfilAlumno"><i class="align-middle me-1" data-feather="user"></i> Perfil</a>
                     <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="droplet"></i> Paleta de Colores</a>
-                    <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="credit-card"></i> Aumenta de nivel</a>
+                    <a class="dropdown-item" href="/paypal"><i class="align-middle me-1" data-feather="credit-card"></i> Aumenta de nivel</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="log-out"></i> Cerrar Sesión</a>
+                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="align-middle me-1" data-feather="log-out"></i> Cerrar Sesión
+                    </a>
+                    
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>                
                 </div>
             </li>
         </ul>

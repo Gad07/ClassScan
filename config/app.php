@@ -2,6 +2,7 @@
 
 return [
 
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -78,11 +79,11 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'es'),
 
-    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'es'),
 
-    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+    'faker_locale' => env('APP_FAKER_LOCALE', 'es_ES'),
 
     /*
     |--------------------------------------------------------------------------
@@ -132,4 +133,7 @@ return [
     ],
 
 
+    'paypal_id' => env('PAYPAL_CLIENT_ID', "ARDKOUhRE-aAWJktUhLyhj0demTSlVSTZXMnebzjWDRkzJruCdCXkAW_OYHWoXN1_kp8MmpW8mNbrj-o"),
+    'paypal_secret' => env('PAYPAL_SECRET',"ENCorm9h-XRsM8FqvYFVBPFJzA-lDRb1r-Ze2WEJvBK1qCrRzEj2V64WxmzhEjMjd2yq_rNh_2K3BiY2")
+    
 ];

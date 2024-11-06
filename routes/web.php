@@ -13,9 +13,12 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\JustificanteController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentPaypalController;
 
-
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+Route::get('/terms', function () {
+    return view('terms');
+})->name('terms');
 
 Route::get('/pago', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
 Route::post('/pago', [PaymentController::class, 'processPayment'])->name('payment.process');
@@ -101,6 +104,10 @@ Route::middleware(['auth'])->group(function () {
 
 // Rutas específicas para alumnos
 Route::middleware(['auth', CheckRole::class . ':alumno'])->group(function () {
+
+    Route::get('/paypal', [PaymentPaypalController::class, 'paypal']);
+    Route::post('/paypal-process-order/{order}', [PaymentPaypalController::class, 'paypalProcessOrder']);
+    Route::post('/payment-success', [PaymentPaypalController::class, 'paymentSuccess'])->name('payment.success');
 
     Route::get('/perfilAlumno', [ProfileAlumnoController::class, 'edit'])->name('profile.edit');
     Route::get('/perfilAlumno', [ProfileAlumnoController::class, 'edit'])->name('profile.edit_alumno');

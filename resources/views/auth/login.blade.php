@@ -74,14 +74,14 @@
                         <!-- Email Address -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Correo Electrónico</label>
-                            <input id="email" class="form-control" type="email" name="email" :value="old('email')" required autofocus autocomplete="username">
+                            <input id="email" class="form-control @error('email') is-invalid @enderror" type="email" name="email" :value="old('email')" required autofocus autocomplete="username">
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
                         </div>
                         
                         <!-- Password -->
                         <div class="mb-3">
                             <label for="password" class="form-label">Contraseña</label>
-                            <input id="password" class="form-control" type="password" name="password" required autocomplete="current-password">
+                            <input id="password" class="form-control @error('password') is-invalid @enderror" type="password" name="password" required autocomplete="current-password">
                             <x-input-error :messages="$errors->get('password')" class="mt-2" />
                         </div>
                         
@@ -96,15 +96,6 @@
                             </div>
                         </div>
 
-                        <!-- Accept Terms and Privacy Policy -->
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="terms" id="terms" required>
-                                <label class="form-check-label" for="terms">
-                                    Acepto los <a href="#" class="text-decoration-none">términos y condiciones</a> y la <a href="#" class="text-decoration-none">política de privacidad</a>
-                                </label>
-                            </div>
-                        </div>
                         
                         <!-- Sign In Button -->
                         <div class="mb-3">

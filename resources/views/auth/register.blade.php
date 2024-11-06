@@ -108,6 +108,16 @@
                             <x-input-error :messages="$errors->get('role')" class="mt-2" />
                         </div>    
 
+                        <!-- Accept Terms and Privacy Policy -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="terms" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    Acepto los <a href="#" class="text-decoration-none">términos y condiciones</a> y la <a href="{{ url('/terms') }}" class="text-decoration-none">política de privacidad</a>
+                                </label>
+                            </div>
+                        </div>
+
                         <!-- Register Button and Login Link -->
                         <div class="d-flex items-center justify-content-between mt-4">
                             <a class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100" href="{{ route('login') }}">

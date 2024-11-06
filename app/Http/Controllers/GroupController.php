@@ -384,7 +384,7 @@ class GroupController extends Controller
             $qrCode = QrCode::size(300)->generate($qrUrl);
         }
 
-        return view('dashboard.groups.show', compact('group', 'qrCode', 'expiration', 'dates', 'attendanceSummary'));
+        return view('dashboard-alumno', compact('group', 'qrCode', 'expiration', 'dates', 'attendanceSummary'));
     }
 
     public function addAlumnosForm(Request $request, $id)
@@ -535,11 +535,11 @@ class GroupController extends Controller
         $attendance->save();
 
         // Agregar notificación para el alumno
-        session()->push('notifications', [
-            'message' => 'Asistencia registrada como "' . $attendance->status . '" para el grupo "' . $group_user->user. '"',
-            'type' => 'info',
-            'time' => now()->diffForHumans()
-        ]);
+        // session()->push('notifications', [
+        //     'message' => 'Asistencia registrada como "' . $attendance->status . '" para el grupo "' . $group_user->user. '"',
+        //     'type' => 'info',
+        //     'time' => now()->diffForHumans()
+        // ]);
 
         return redirect()->route('groups.show', $group->id)->with('success', 'Asistencia registrada correctamente.');
     }

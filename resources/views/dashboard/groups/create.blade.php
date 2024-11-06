@@ -228,6 +228,7 @@
                                     @enderror
                                 </td>
                             </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -246,7 +247,7 @@
     </div>
 </div>
 
-<script>
+<<script>
     document.addEventListener('DOMContentLoaded', function () {
         // Función para mostrar las notificaciones tipo "toast"
         function mostrarToast(mensaje, tipo = 'success') {
@@ -346,18 +347,26 @@
 
         function toggleQrInterval() {
             if (toleranceCheckbox.checked) {
-                qrIntervalRow.style.display = 'none'; // Ocultar la fila completa
-                qrIntervalHidden.value = '30'; // Establecer a 30 cuando se habilita la tolerancia
+                qrIntervalRow.style.display = 'none'; // Ocultar la fila completa si tolerancia está activada
+                qrIntervalHidden.value = '30'; // Establecer el valor a 30 minutos cuando se habilita la tolerancia
             } else {
-                qrIntervalRow.style.display = 'table-row'; // Mostrar la fila completa
-                qrIntervalHidden.value = qrIntervalSelect.value; // Restaurar el valor oculto según la selección actual
+                qrIntervalRow.style.display = 'table-row'; // Mostrar la fila si tolerancia está desactivada
+                qrIntervalHidden.value = qrIntervalSelect.value ? qrIntervalSelect.value : ''; // Asignar valor del select al campo oculto
             }
         }
 
-        toleranceCheckbox.addEventListener('change', toggleQrInterval);
-
         // Inicializar el estado al cargar la página
         toggleQrInterval();
+
+        // Listener para cambios en el checkbox de tolerancia
+        toleranceCheckbox.addEventListener('change', toggleQrInterval);
+
+        // Listener para cambios en el select de intervalo
+        qrIntervalSelect.addEventListener('change', function () {
+            if (!toleranceCheckbox.checked) {
+                qrIntervalHidden.value = qrIntervalSelect.value; // Actualizar el valor si tolerancia está desactivada
+            }
+        });
 
         // Validación de horario de inicio y fin en tiempo real
         const startTimeField = document.getElementById('start_time');

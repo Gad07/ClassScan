@@ -1,4 +1,13 @@
-@extends('layouts/app')
+@php
+    if (Auth::user()->role == 'profesor' && $group->profesor_id == Auth::id()) {
+        $layout = 'layouts/app';
+    } elseif (Auth::user()->role == 'alumno') {
+        $layout = 'layouts/appStudent';
+    } 
+@endphp
+
+@extends($layout)
+
 
 @section('content')
 <div class="container-fluid px-4">
@@ -37,6 +46,7 @@
     </div>
 
     <!-- Exportación de asistencia -->
+    @if (Auth::user()->role == 'profesor' && $group->profesor_id == Auth::id())
     <div class="card mt-4">
         <div class="card-header bg-secondary text-white">
             <h5 class="card-title mb-0">Exportar Historial de Asistencias</h5>
@@ -67,6 +77,7 @@
             </form>
         </div>
     </div>
+    @endif
 
     <!-- Gráfica de Resumen de Asistencias -->
     @if (Auth::user()->role == 'profesor' && $group->profesor_id == Auth::id())
@@ -166,14 +177,16 @@
     @endif
 
     @if (Auth::user()->role == 'alumno')
-        <a href="{{ route('groups.showStudent', [$group->id, Auth::user()->id]) }}" class="btn btn-info mb-3">
+        <a href="{{ route('alumno.show', $group->id) }}" class="btn btn-info mb-3">
             Ver Mi Información
         </a>
     @endif
 
-    <a href="{{ route('groups.index') }}" class="btn btn-danger">
-        Volver a la Lista de Grupos
-    </a>
+    @if(Auth::user()->role == 'profesor' && $group->profesor_id == Auth::id())
+        <a href="{{ route('groups.index') }}" class="btn btn-danger">
+            Volver a la Lista de Grupos
+        </a>
+    @endif
 </div>
 
 <!-- Script para Chart.js y QR Management -->
