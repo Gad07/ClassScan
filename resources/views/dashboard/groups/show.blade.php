@@ -81,42 +81,40 @@
 
     <!-- Gráfica de Resumen de Asistencias -->
     @if (Auth::user()->role == 'profesor' && $group->profesor_id == Auth::id())
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-secondary text-white d-flex align-items-center">
-            <h3 class="card-title mb-0 text-white"><i class="fas fa-chart-bar me-2"></i>Resumen de Asistencias</h3>
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-secondary text-white d-flex align-items-center">
+                <h3 class="card-title mb-0 text-white"><i class="fas fa-chart-bar me-2"></i>Resumen de Asistencias</h3>
+            </div>
+            <div class="card-body" style="height: 450px;">
+                <div class="mb-3">
+                    <label for="dateSelect" class="form-label">Selecciona la fecha de la sesión:</label>
+                    <form method="GET" action="{{ route('groups.show', $group->id) }}">
+                        <select id="dateSelect" name="selected_date" class="form-select" onchange="updateChartData()">
+                            @foreach($dates as $date)
+                                <option value="{{ $date }}" {{ request('selected_date') == $date ? 'selected' : '' }}>{{ $date }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+                <div class="chart-container" style="position: relative; height: 350px;">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+                <div class="table-responsive mt-4">
+                    <table class="table table-bordered">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Alumno</th>
+                                <th>Estado de Asistencia</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- Filas de asistencia se generarán dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div class="card-body" style="height: 450px;">
-            <div class="mb-3">
-                <label for="dateSelect" class="form-label">Selecciona la fecha de la sesión:</label>
-                <form method="GET" action="{{ route('groups.show', $group->id) }}">
-                    <select id="dateSelect" name="selected_date" class="form-select" onchange="updateChartData()">
-                        @foreach($dates as $date)
-                            <option value="{{ $date }}" {{ request('selected_date') == $date ? 'selected' : '' }}>{{ $date }}</option>
-                        @endforeach
-                    </select>
-                </form>
-            </div>
-            <div class="chart-container" style="position: relative; height: 350px;">
-                <canvas id="attendanceChart"></canvas>
-            </div>
-            <div class="table-responsive mt-4">
-                <table class="table table-bordered">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>Alumno</th>
-                            <th>Estado de Asistencia</th>
-                        </tr>
-                    </thead>
-                    <tbody id="attendanceTableBody">
-                        <!-- Filas de asistencia se generarán dinámicamente -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-@endif
-
-
+    @endif
 
 
     <!-- Lista de Alumnos y Opción para Agregar Alumnos -->
@@ -188,11 +186,50 @@
         </a>
     @endif
 </div>
-
 <!-- Script para Chart.js y QR Management -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        const selectedDate = document.getElementById("dateSelect").value;
+
+        async function validarSuperposicion() {
+            const selectedDays = Array.from(classDaysCheckboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+            const startTime = startTimeField.value;
+            const endTime = endTimeField.value;
+    
+            if (selectedDays.length === 0 || !startTime || !endTime) {
+                return false; // Si no hay días o tiempos seleccionados, no se puede validar
+            }
+    
+            try {
+                const response = await fetch('{{ route("groups.checkScheduleConflict") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        days: selectedDays,
+                        start_time: startTime,
+                        end_time: endTime
+                    })
+                });
+    
+                const data = await response.json();
+                if (data.conflict) {
+                    mostrarToast('El horario se superpone con otro grupo existente.', 'danger');
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Error validando superposición de horario:', error);
+                mostrarToast('Ocurrió un error al validar el horario. Intente nuevamente.', 'danger');
+                return false;
+            }
+        }
+
         function showToast(message, type = 'success') {
             const toastContainer = document.getElementById('toast-container') || createToastContainer();
             const toast = document.createElement('div');
@@ -235,6 +272,7 @@
             return toastContainer;
         }
 
+        const groupId = "{{ $group->id }}";
         const startTime = "{{ explode(' - ', $group->class_schedule)[0] }}";
         const endTime = "{{ explode(' - ', $group->class_schedule)[1] }}";
         const classDays = "{{ $group->class_days }}".split(',');
@@ -255,7 +293,6 @@
         const manualAttendanceButton = document.getElementById('manual-attendance');
 
         // Verificar si hay un QR almacenado al cargar la página
-        const groupId = "{{ $group->id }}";
         const storedQrCode = localStorage.getItem(`qrCode-${groupId}`);
         const storedExpiration = localStorage.getItem(`expiration-${groupId}`);
         const qrGenerated = localStorage.getItem(`qrGenerated-${groupId}`);
@@ -304,7 +341,6 @@
         }
 
         function markAllAbsentOnce() {
-            // Verificar si ya se marcó la asistencia una vez
             if (localStorage.getItem(`markedAbsent-${groupId}`) === 'true') {
                 return;
             }
@@ -370,7 +406,7 @@
 
         function updateChartData() {
             const selectedDate = document.getElementById("dateSelect").value;
-        
+    
             fetch(`/groups/${groupId}/attendance-data?date=${selectedDate}`, {
                 method: 'GET',
                 headers: {
@@ -396,49 +432,167 @@
                 console.error('Error al cargar los datos de asistencia:', error);
             });
         }
+    
+
 
         function renderChart(data) {
             const ctx = document.getElementById("attendanceChart").getContext("2d");
-            if (window.attendanceChart) {
+        
+            // Verificar si `window.attendanceChart` existe y es una instancia de Chart antes de destruirla
+            if (window.attendanceChart instanceof Chart) {
                 window.attendanceChart.destroy();
             }
-
+        
+            // Crear nueva gráfica con los colores verde, amarillo, naranja y rojo
             window.attendanceChart = new Chart(ctx, {
                 type: "bar",
                 data: {
-                    labels: data.labels,
+                    // Asegurarse de que solo se usen las etiquetas relevantes para la gráfica
+                    labels: data.labels.slice(0, 4), // Usamos solo las primeras 4 categorías: 'A Tiempo', 'Retardo A', 'Retardo B', 'Falta'
                     datasets: [{
                         label: "Asistencias",
-                        data: data.attendance,
-                        backgroundColor: "rgba(75, 192, 192, 0.2)",
-                        borderColor: "rgba(75, 192, 192, 1)",
-                        borderWidth: 1
+                        data: data.attendance.slice(0, 4), // Usamos solo los datos correspondientes a esas categorías
+                        backgroundColor: [
+                            "rgba(75, 192, 75, 0.8)",  // Verde para 'A Tiempo'
+                            "rgba(255, 206, 86, 0.8)",  // Amarillo para 'Retardo A'
+                            "rgba(255, 159, 64, 0.8)",  // Naranja para 'Retardo B'
+                            "rgba(255, 99, 132, 0.8)"   // Rojo para 'Falta'
+                        ],
+                        borderColor: [
+                            "rgba(75, 192, 75, 1)",  // Borde verde para 'A Tiempo'
+                            "rgba(255, 206, 86, 1)",  // Borde amarillo para 'Retardo A'
+                            "rgba(255, 159, 64, 1)",  // Borde naranja para 'Retardo B'
+                            "rgba(255, 99, 132, 1)"   // Borde rojo para 'Falta'
+                        ],
+                        borderWidth: 2
                     }]
                 },
                 options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "Número de Asistencias"
+                            },
+                            ticks: {
+                                stepSize: 1
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: "Categoría de Asistencia"
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}`;
+                                }
+                            }
                         }
                     }
                 }
             });
         }
-
+        
         function renderTable(data) {
             const tableBody = document.getElementById("attendanceTableBody");
+            if (!tableBody) {
+                console.error("No se pudo encontrar el elemento 'attendanceTableBody'");
+                return;
+            }
+
             tableBody.innerHTML = "";
-            data.attendanceDetails.forEach(detail => {
-                const row = `<tr>
-                                <td>${detail.alumno}</td>
-                                <td>${detail.status}</td>
-                             </tr>`;
-                tableBody.innerHTML += row;
-            });
+            if (data.attendanceDetails && data.attendanceDetails.length > 0) {
+                data.attendanceDetails.forEach(detail => {
+                    const row = `<tr>
+                                    <td>${detail.alumno}</td>
+                                    <td>${detail.status}</td>
+                                 </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } else {
+                console.warn("No se encontraron datos de asistencia.");
+            }
         }
 
-        updateChartData(); // Inicializar los datos de la gráfica y tabla
+        // Aquí declaramos `dateSelect` solo una vez
+        const dateSelect = document.getElementById("dateSelect");
+    
+        if (dateSelect) {
+            dateSelect.addEventListener("change", updateChartData); // Añadir evento `change` a la selección de la fecha
+            updateChartData(); // Llamar para inicializar los datos de la gráfica cuando se carga la página
+        } else {
+            console.warn("Elemento 'dateSelect' no encontrado.");
+        }
+
+        async function validarSuperposicion() {
+            const selectedDays = Array.from(classDaysCheckboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+            const startTime = startTimeField.value;
+            const endTime = endTimeField.value;
+    
+            if (selectedDays.length === 0 || !startTime || !endTime) {
+                return false; // Si no hay días o tiempos seleccionados, no se puede validar
+            }
+    
+            try {
+                const response = await fetch('{{ route("groups.checkScheduleConflict") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        days: selectedDays,
+                        start_time: startTime,
+                        end_time: endTime
+                    })
+                });
+    
+                const data = await response.json();
+                if (data.conflict) {
+                    mostrarToast('El horario se superpone con otro grupo existente.', 'danger');
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Error validando superposición de horario:', error);
+                mostrarToast('Ocurrió un error al validar el horario. Intente nuevamente.', 'danger');
+                return false;
+            }
+        }
+
+        document.getElementById('group-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+    
+            // Validar horarios seleccionados en tiempo real
+            if (!validarDias() || !validarHorario()) {
+                mostrarToast('Corrija los errores antes de continuar.', 'danger');
+                return;
+            }
+    
+            const esValido = await validarSuperposicion();
+            if (!esValido) {
+                return; // No proceder si hay conflicto de horarios
+            }
+    
+            // Enviar el formulario si todo es válido
+            this.submit();
+        });
+
     });
 </script>
-
 @endsection

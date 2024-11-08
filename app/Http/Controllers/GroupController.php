@@ -72,6 +72,28 @@ class GroupController extends Controller
         ]);
 
         if (Auth::user()->role == User::ROLE_PROFESOR) {
+            // Extraer los días de clase y el horario
+            $classDays = explode(',', $validatedData['class_days']);
+            list($startTime, $endTime) = explode(' - ', $validatedData['class_schedule']);
+
+            // Validar que no haya un horario superpuesto con los grupos existentes del profesor
+            $existingGroups = Group::where('profesor_id', Auth::id())
+                ->where(function ($query) use ($classDays) {
+                    foreach ($classDays as $day) {
+                        $query->orWhereRaw("FIND_IN_SET(?, class_days) > 0", [$day]);
+                    }
+                })
+                ->get();
+
+            foreach ($existingGroups as $group) {
+                list($existingStartTime, $existingEndTime) = explode(' - ', $group->class_schedule);
+                if (
+                    ($startTime < $existingEndTime && $endTime > $existingStartTime)
+                ) {
+                    return redirect()->back()->withErrors(['error' => 'El horario se superpone con otro grupo existente.']);
+                }
+            }
+
             // Manejo de nueva escuela
             if ($validatedData['new_school_name']) {
                 $school = School::create(['name' => $validatedData['new_school_name']]);
