@@ -4,7 +4,7 @@
 <div class="container-fluid px-4">
     <div class="row align-items-center mb-4">
         <div class="col-8">
-            <h1 class="h3 text-dark">Mis Grupos</h1>
+            <h1 class="h3 text-primary">Mis Grupos</h1>
         </div>
 
     </div>
@@ -19,14 +19,14 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card shadow-sm h-100">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">{{ $group->name }}</h5>
+                            <h5 class="mb-0 text-white">{{ $group->name }}</h5>
                         </div>
                         <div class="card-body">
                             <p><strong>Escuela:</strong> {{ $group->school ? $group->school->name : 'No asignada' }}</p>
                             <p><strong>Profesor:</strong> {{ $group->profesor ? $group->profesor->name : 'Sin profesor' }}</p>
                         </div>
                         <div class="card-footer text-end">
-                            <a href="{{ route('alumno.show', $group->id) }}" class="btn btn-primary btn-sm">
+                            <a href="{{ route('alumno.show', $group->id) }}" class="btn btn-outline-primary btn-sm">
                                 <i class="fas fa-eye"></i> Ver Detalles
                             </a>
                         </div>

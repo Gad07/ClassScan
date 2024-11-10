@@ -7,7 +7,7 @@
     <!-- Título de la página -->
     <div class="text-center mb-5">
         <h1 class="display-4 text-primary"> ClassScan</h1>
-        <p class="lead text-muted">Elija su suscripción para continuar utilizando nuestros servicios.</p>
+        <p class="lead text-black">Elija su suscripción para continuar utilizando nuestros servicios.</p>
     </div>
 
     <!-- Contenedor de suscripciones -->
@@ -15,12 +15,12 @@
         <!-- Suscripción Mensual -->
         <div class="col-md-4 mb-4">
             <div class="card shadow border-0 h-100">
-                <div class="card-header text-center bg-info text-white py-4">
-                    <h3 class="mb-0">Suscripción Mensual</h3>
+                <div class="card-header text-center bg-primary text-white py-4">
+                    <h3 class="mb-0  text-white">Suscripción Mensual</h3>
                 </div>
                 <div class="card-body text-center">
                     <img src="{{ asset('images/logo_name.png') }}" alt="Producto Mensual" class="img-fluid my-3" style="width: 150px;">
-                    <p class="display-6">$20 MX/mes</p>
+                    <p class="display-6 text-dark">$20 MX/mes</p>
                     <div id="paypalButtonsMonthly"></div>
                 </div>
             </div>
@@ -29,12 +29,12 @@
         <!-- Suscripción Anual -->
         <div class="col-md-4 mb-4">
             <div class="card shadow border-0 h-100">
-                <div class="card-header text-center bg-success text-white py-4">
-                    <h3 class="mb-0">Suscripción Anual</h3>
+                <div class="card-header text-center bg-primary text-white py-4">
+                    <h3 class="mb-0  text-white">Suscripción Anual</h3>
                 </div>
                 <div class="card-body text-center">
                     <img src="{{ asset('images/logo_name.png') }}" alt="Producto Anual" class="img-fluid my-3" style="width: 150px;">
-                    <p class="display-6">$300 MX/año</p>
+                    <p class="display-6 text-dark">$300 MX/año</p>
                     <div id="paypalButtonsAnnual"></div>
                 </div>
             </div>

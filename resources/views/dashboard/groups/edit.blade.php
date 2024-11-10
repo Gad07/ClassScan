@@ -7,27 +7,16 @@
     <!-- Tarjeta para Editar Grupo -->
     <div class="card mb-4 shadow border-0">
         <div class="card-header bg-primary text-white">
-            <h3 class="mb-0 text-center">Editar Grupo</h3>
+            <h3 class="mb-0 text-center text-white">Editar Grupo</h3>
         </div>
         <div class="card-body">
-            <!-- Toast Notification Placeholder -->
-            <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
-
             <!-- Mostrar Mensajes de Sesión -->
             @if(session('success'))
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        showToast("{{ session('success') }}", "success");
-                    });
-                </script>
+                <div class="alert alert-success" id="message-label">{{ session('success') }}</div>
             @endif
 
             @if(session('error'))
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        showToast("{{ session('error') }}", "danger");
-                    });
-                </script>
+                <div class="alert alert-danger" id="message-label">{{ session('error') }}</div>
             @endif
 
             <!-- Mostrar Errores de Validación -->
@@ -214,7 +203,7 @@
                             <tr id="qr-interval-row">
                                 <td class="align-middle text-secondary fw-bold">Intervalo de QR (en minutos)</td>
                                 <td>
-                                    <select id="qr_interval" name="qr_interval" class="form-select" required>
+                                    <select id="qr_interval" name="qr_interval_select" class="form-select" {{ old('tolerance', $group->tolerance) ? 'disabled' : '' }}>
                                         <option value="">Selecciona un Intervalo</option>
                                         <option value="5" {{ old('qr_interval', $group->qr_interval) == '5' ? 'selected' : '' }}>5 minutos</option>
                                         <option value="10" {{ old('qr_interval', $group->qr_interval) == '10' ? 'selected' : '' }}>10 minutos</option>
@@ -222,6 +211,7 @@
                                         <option value="20" {{ old('qr_interval', $group->qr_interval) == '20' ? 'selected' : '' }}>20 minutos</option>
                                         <option value="25" {{ old('qr_interval', $group->qr_interval) == '25' ? 'selected' : '' }}>25 minutos</option>
                                     </select>
+                                    <input type="hidden" id="qr_interval_hidden" name="qr_interval" value="{{ old('tolerance', $group->tolerance) ? '30' : old('qr_interval', $group->qr_interval) }}">
                                     @error('qr_interval')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
@@ -233,10 +223,10 @@
 
                 <!-- Botones de Acción -->
                 <div class="d-flex justify-content-center mt-4">
-                    <button type="submit" class="btn btn-success me-3">
+                    <button type="submit" class="btn btn-outline-primary me-3">
                         <i class="fas fa-save"></i> Actualizar Grupo
                     </button>
-                    <a href="{{ route('groups.index') }}" class="btn btn-danger">
+                    <a href="{{ route('groups.index') }}" class="btn btn-outline-danger">
                         <i class="fas fa-times"></i> Cancelar
                     </a>
                 </div>
@@ -247,36 +237,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Función para mostrar las notificaciones tipo "toast"
-        function showToast(message, type = 'success') {
-            const toastContainer = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast alert alert-${type} fade show`;
-            toast.innerHTML = `${message}`;
-            toast.style.position = 'relative';
-            toast.style.marginBottom = '10px';
-            toast.style.padding = '15px';
-            toast.style.borderRadius = '5px';
-            toast.style.minWidth = '200px';
-
-            // Estilos específicos para éxito y error
-            if (type === 'success') {
-                toast.style.backgroundColor = '#4caf50'; // Verde para éxito
-                toast.style.color = '#fff';
-            } else if (type === 'danger') {
-                toast.style.backgroundColor = '#f44336'; // Rojo para error
-                toast.style.color = '#fff';
-            }
-
-            toastContainer.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                toast.classList.add('hide');
-                toast.remove();
-            }, 5000); // 5 segundos para que sea más visible
-        }
-
         // Mostrar/ocultar campo para nueva escuela
         const addSchoolLink = document.getElementById('add-school-link');
         const newSchoolField = document.getElementById('new-school-field');
@@ -341,12 +301,16 @@
         // Mostrar/ocultar intervalo de QR dependiendo del checkbox de Tolerancia
         const toleranceCheckbox = document.getElementById('tolerance');
         const qrIntervalRow = document.getElementById('qr-interval-row');
+        const qrIntervalSelect = document.getElementById('qr_interval');
+        const qrIntervalHidden = document.getElementById('qr_interval_hidden');
 
         function toggleQrInterval() {
             if (toleranceCheckbox.checked) {
                 qrIntervalRow.style.display = 'none';
+                qrIntervalHidden.value = '30'; // Establecer el valor a 30 cuando se habilita la tolerancia
             } else {
                 qrIntervalRow.style.display = 'table-row';
+                qrIntervalHidden.value = qrIntervalSelect.value; // Restaurar el valor según la selección actual
             }
         }
 
@@ -380,13 +344,15 @@
         document.getElementById('group-form').addEventListener('submit', function (e) {
             if (!validateDays()) {
                 e.preventDefault();
-                showToast('Debe seleccionar al menos un día de clase.', 'danger');
+                document.getElementById('message-label').innerHTML = 'Debe seleccionar al menos un día de clase.';
+                document.getElementById('message-label').classList.add('alert', 'alert-danger');
                 return;
             }
 
             if (!validateTimes()) {
                 e.preventDefault();
-                showToast('La hora de inicio debe ser menor que la hora de fin.', 'danger');
+                document.getElementById('message-label').innerHTML = 'La hora de inicio debe ser menor que la hora de fin.';
+                document.getElementById('message-label').classList.add('alert', 'alert-danger');
                 return;
             }
 
@@ -410,6 +376,14 @@
                 hiddenScheduleField.name = 'class_schedule';
                 hiddenScheduleField.value = classSchedule;
                 document.getElementById('group-form').appendChild(hiddenScheduleField);
+            }
+
+            // Gestionar el valor de 'qr_interval'
+            if (toleranceCheckbox.checked) {
+                qrIntervalHidden.value = '30';
+            } else {
+                const qrIntervalSelectValue = qrIntervalSelect.value;
+                qrIntervalHidden.value = qrIntervalSelectValue;
             }
 
             // Deshabilitar los checkboxes para evitar múltiples selecciones mientras se envía el formulario

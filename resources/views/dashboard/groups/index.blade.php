@@ -6,10 +6,10 @@
 <div class="container-fluid px-4">
     <div class="card mb-4 shadow-lg border-0">
         <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
-            <h3 class="mb-0 text-center">Lista de Grupos</h3>
+            <h3 class="mb-0 text-center text-white">Lista de Grupos</h3>
             @if(Auth::user()->isProfesor())
                 <!-- Solo los profesores pueden crear un nuevo grupo -->
-                <a href="{{ route('groups.create') }}" class="btn btn-success">
+                <a href="{{ route('groups.create') }}" class="btn btn-outline-primary">
                     <i class="fas fa-plus"></i> Crear Nuevo Grupo
                 </a>
             @endif

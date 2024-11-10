@@ -7,7 +7,7 @@
     <!-- Título de la página -->
     <div class="row align-items-center mb-4">
         <div class="col-12">
-            <h1 class="h3 text-dark">Bienvenido Alumno</h1>
+            <h1 class="h3 text-primary">Bienvenido Alumno</h1>
         </div>
     </div>
 
@@ -40,15 +40,15 @@
     <div class="row">
         <div class="col-12">
             <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Mi Historial de Asistencias</h5>
+                <div class="card-header bg-primary text-white d-flex align-items-center">
+                    <h3 class="card-title mb-0 text-white">Mi Historial de Asistencias</h3>
                 </div>
                 <div class="card-body">
                     @if ($asistencias->isEmpty())
                         <p class="text-center">No hay registros de asistencia disponibles.</p>
                     @else
-                        <table class="table table-hover table-striped table-bordered shadow-lg rounded">
-                            <thead class="table-dark">
+                        <table class="table table-hover table-sm table-bordered align-middle bg-white">
+                            <thead class="table-white">
                                 <tr>
                                     <th>Fecha</th>
                                     <th>Grupo</th>
@@ -59,9 +59,9 @@
                             <tbody>
                                 @foreach ($asistencias as $asistencia)
                                     <tr
-                                        @if($asistencia->status == 'absent') style="background-color: #f8d7da;"
-                                        @elseif($asistencia->status == 'on_time') style="background-color: #d4edda;"
-                                        @elseif($asistencia->status == 'late_a' || $asistencia->status == 'late_b') style="background-color: #fff3cd;" @endif
+                                        @if($asistencia->status == 'absent') style="background-color: #FFFFF;"
+                                        @elseif($asistencia->status == 'on_time') style="background-color: #FFFFF;"
+                                        @elseif($asistencia->status == 'late_a' || $asistencia->status == 'late_b') style="background-color: #FFFFFF;" @endif
                                     >
                                         <td>{{ \Carbon\Carbon::parse($asistencia->date)->format('d/m/Y') }}</td>
                                         <td>{{ $asistencia->group->name }}</td>
@@ -109,8 +109,8 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                                    <button type="submit" class="btn btn-primary">Subir</button>
+                                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                                    <button type="submit" class="btn btn-outline-primary">Subir</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -145,8 +145,8 @@
     <div class="row">
         <div class="col-12">
             <div class="card shadow-sm mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Calendario de {{ \Carbon\Carbon::now()->locale('es')->isoFormat('MMMM YYYY') }}</h5>
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0 text-white">Calendario de {{ \Carbon\Carbon::now()->locale('es')->isoFormat('MMMM YYYY') }}</h5>
                 </div>
                 <div class="card-body">
                     <!-- Generar el calendario del mes actual -->

@@ -13,15 +13,15 @@
     <!-- Buscar Alumnos -->
     <form method="GET" action="{{ route('groups.addAlumnosForm', $group->id) }}" class="input-group mb-4 mt-4">
         <input type="text" name="search" class="form-control" placeholder="Buscar por correo electrónico" value="{{ request('search') }}">
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-outline-primary">
             Buscar
         </button>
     </form>
 
     <!-- Importar Alumnos desde Archivo Excel -->
     <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-dark text-white">
-            <h2 class="card-title mb-0">Cargar Archivo Excel</h2>
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title text-white mb-0">Cargar Archivo Excel</h2>
         </div>
         <div class="card-body">
             <form action="{{ route('groups.importAlumnosPhpSpreadsheet', $group->id) }}" method="POST" enctype="multipart/form-data">
@@ -31,7 +31,7 @@
                     <input type="file" name="file" id="file" class="form-control" required>
                     <small class="form-text text-muted">Asegúrate de que el archivo sea un formato válido (.xlsx, .xls).</small>
                 </div>
-                <button type="submit" class="btn btn-success">
+                <button type="submit" class="btn btn-outline-primary">
                     Importar Alumnos
                 </button>
             </form>
@@ -40,8 +40,8 @@
 
     <!-- Agregar Alumnos al Grupo -->
     <div class="card shadow-sm border-0">
-        <div class="card-header bg-dark text-white">
-            <h2 class="card-title mb-0">Selecciona Alumnos para Agregar</h2>
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title mb-0 text-white">Selecciona Alumnos para Agregar</h2>
         </div>
         <div class="card-body">
             <form action="{{ route('groups.addAlumnos', $group->id) }}" method="POST">
@@ -58,10 +58,10 @@
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn btn-outline-primary">
                         Agregar Alumnos
                     </button>
-                    <a href="{{ route('groups.show', $group->id) }}" class="btn btn-secondary">
+                    <a href="{{ route('groups.show', $group->id) }}" class="btn btn-outline-danger">
                         Cancelar
                     </a>
                 </div>

@@ -7,27 +7,16 @@
     <!-- Tarjeta para Crear Grupo -->
     <div class="card mb-4 shadow border-0">
         <div class="card-header bg-primary text-white">
-            <h3 class="mb-0 text-center">Crear Nuevo Grupo</h3>
+            <h3 class="mb-0 text-center text-white">Crear Nuevo Grupo</h3>
         </div>
         <div class="card-body">
-            <!-- Contenedor de Notificación tipo Toast -->
-            <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
-
             <!-- Mostrar Mensajes de Sesión -->
             @if(session('success'))
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        mostrarToast("{{ session('success') }}", "success");
-                    });
-                </script>
+                <div class="alert alert-success" id="message-label">{{ session('success') }}</div>
             @endif
 
             @if(session('error'))
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        mostrarToast("{{ session('error') }}", "danger");
-                    });
-                </script>
+                <div class="alert alert-danger" id="message-label">{{ session('error') }}</div>
             @endif
 
             <!-- Mostrar Errores de Validación -->
@@ -228,17 +217,16 @@
                                     @enderror
                                 </td>
                             </tr>
-
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Botones de Acción -->
                 <div class="d-flex justify-content-center mt-4">
-                    <button type="submit" class="btn btn-success me-3">
+                    <button type="submit" class="btn btn-outline-primary me-3">
                         <i class="fas fa-save"></i> Crear Grupo
                     </button>
-                    <a href="{{ route('groups.index') }}" class="btn btn-danger">
+                    <a href="{{ route('groups.index') }}" class="btn btn-outline-danger">
                         <i class="fas fa-times"></i> Cancelar
                     </a>
                 </div>
@@ -247,37 +235,8 @@
     </div>
 </div>
 
-<<script>
+<script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Función para mostrar las notificaciones tipo "toast"
-        function mostrarToast(mensaje, tipo = 'success') {
-            const toastContainer = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast alert alert-${tipo} fade show`;
-            toast.innerHTML = `${mensaje}`;
-            toast.style.position = 'relative';
-            toast.style.marginBottom = '10px';
-            toast.style.padding = '15px';
-            toast.style.borderRadius = '5px';
-            toast.style.minWidth = '200px';
-
-            if (tipo === 'success') {
-                toast.style.backgroundColor = '#4caf50';
-                toast.style.color = '#fff';
-            } else if (tipo === 'danger') {
-                toast.style.backgroundColor = '#f44336';
-                toast.style.color = '#fff';
-            }
-
-            toastContainer.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                toast.classList.add('hide');
-                toast.remove();
-            }, 5000);
-        }
-
         // Mostrar/ocultar campo para nueva escuela
         const addSchoolLink = document.getElementById('add-school-link');
         const newSchoolField = document.getElementById('new-school-field');
@@ -347,26 +306,18 @@
 
         function toggleQrInterval() {
             if (toleranceCheckbox.checked) {
-                qrIntervalRow.style.display = 'none'; // Ocultar la fila completa si tolerancia está activada
-                qrIntervalHidden.value = '30'; // Establecer el valor a 30 minutos cuando se habilita la tolerancia
+                qrIntervalRow.style.display = 'none'; // Ocultar la fila completa
+                qrIntervalHidden.value = '30'; // Establecer a 30 cuando se habilita la tolerancia
             } else {
-                qrIntervalRow.style.display = 'table-row'; // Mostrar la fila si tolerancia está desactivada
-                qrIntervalHidden.value = qrIntervalSelect.value ? qrIntervalSelect.value : ''; // Asignar valor del select al campo oculto
+                qrIntervalRow.style.display = 'table-row'; // Mostrar la fila completa
+                qrIntervalHidden.value = qrIntervalSelect.value; // Restaurar el valor oculto según la selección actual
             }
         }
 
-        // Inicializar el estado al cargar la página
-        toggleQrInterval();
-
-        // Listener para cambios en el checkbox de tolerancia
         toleranceCheckbox.addEventListener('change', toggleQrInterval);
 
-        // Listener para cambios en el select de intervalo
-        qrIntervalSelect.addEventListener('change', function () {
-            if (!toleranceCheckbox.checked) {
-                qrIntervalHidden.value = qrIntervalSelect.value; // Actualizar el valor si tolerancia está desactivada
-            }
-        });
+        // Inicializar el estado al cargar la página
+        toggleQrInterval();
 
         // Validación de horario de inicio y fin en tiempo real
         const startTimeField = document.getElementById('start_time');
@@ -393,13 +344,15 @@
         document.getElementById('group-form').addEventListener('submit', function (e) {
             if (!validarDias()) {
                 e.preventDefault();
-                mostrarToast('Debe seleccionar al menos un día de clase.', 'danger');
+                document.getElementById('message-label').innerHTML = 'Debe seleccionar al menos un día de clase.';
+                document.getElementById('message-label').classList.add('alert', 'alert-danger');
                 return;
             }
 
             if (!validarHorario()) {
                 e.preventDefault();
-                mostrarToast('La hora de inicio debe ser menor que la hora de fin.', 'danger');
+                document.getElementById('message-label').innerHTML = 'La hora de inicio debe ser menor que la hora de fin.';
+                document.getElementById('message-label').classList.add('alert', 'alert-danger');
                 return;
             }
 

@@ -6,8 +6,8 @@
 
     <!-- Tabla de Alumnos para Pase de Lista -->
     <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-dark text-white">
-            <h2 class="card-title mb-0">Registrar Asistencia</h2>
+        <div class="card-header bg-primary text-white">
+            <h2 class="card-title mb-0 text-white">Registrar Asistencia</h2>
         </div>
         <div class="card-body">
             <form action="{{ route('groups.storeManualAttendance', $group->id) }}" method="POST">
@@ -39,7 +39,7 @@
                     </table>
                 </div>
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-success btn-lg">
+                    <button type="submit" class="btn btn-outline-primary btn-lg">
                         Guardar Asistencia
                     </button>
                 </div>

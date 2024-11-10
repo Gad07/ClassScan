@@ -20,10 +20,12 @@ Route::get('/terms', function () {
     return view('terms');
 })->name('terms');
 
+Route::post('/groups/check-schedule-conflict', [GroupController::class, 'checkScheduleConflict'])->name('groups.checkScheduleConflict');
+
 Route::get('/pago', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
 Route::post('/pago', [PaymentController::class, 'processPayment'])->name('payment.process');
 Route::get('/groups/{group}/exportAttendanceHistory', [GroupController::class, 'exportAttendanceHistory'])->name('groups.exportAttendanceHistory');
-Route::post('/groups/validate', [GroupController::class, 'validateGroup'])->name('groups.validateGroup');
+Route::post('/groups/validate', [GroupController::class, 'validateGroup'])->name('groups.validate');
 Route::get('/groups/{group}/attendance-data', [GroupController::class, 'attendanceData'])->name('groups.attendanceData');
 Route::post('/groups/{group}/mark-all-absent', [GroupController::class, 'markAllAbsent'])->name('groups.markAllAbsent');
 Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');

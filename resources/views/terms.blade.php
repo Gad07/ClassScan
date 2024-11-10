@@ -69,12 +69,14 @@
 
     <!-- Contenedor Principal -->
     <div class="container mt-5">
-
         <!-- Sección de Términos y Condiciones -->
         <div id="terms-section" class="content-section">
-            <h1 class="text-center mb-4">Términos y Condiciones</h1>
-            <p>Bienvenido a nuestra aplicación. A continuación, describimos nuestros términos y condiciones. Al utilizar nuestro servicio, aceptas cumplir y estar sujeto a los siguientes términos:</p>
+            
+        <h1 class="text-center mb-4 text-primary">Términos y Condiciones</h1>
+        <p>Bienvenido a nuestra aplicación. A continuación, describimos nuestros términos y condiciones. Al utilizar nuestro servicio, aceptas cumplir y estar sujeto a los siguientes términos:</p>
 
+
+        <div id="divider" class="divider"></div>
             <h2>1. Uso del Servicio</h2>
             <p>El uso de nuestros servicios implica la aceptación de estos términos y condiciones. No puedes utilizar nuestra plataforma con fines ilegales o no autorizados.</p>
 
@@ -85,12 +87,12 @@
             <p>Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento sin previo aviso. Las modificaciones entrarán en vigencia en el momento de su publicación.</p>
         </div>
 
-        <div id="divider" class="divider"></div>
 
         <!-- Sección de Política de Privacidad -->
         <div id="privacy-section" class="content-section d-none">
-            <h1 class="text-center mb-4">Política de Privacidad</h1>
+            <h1 class="text-center mb-4 text-primary">Política de Privacidad</h1>
             <p>Valoramos tu privacidad y estamos comprometidos con la protección de tus datos personales. A continuación, explicamos cómo recopilamos, utilizamos y protegemos tu información:</p>
+            <div id="divider" class="divider"></div>
 
             <h2>1. Información Recopilada</h2>
             <p>Podemos recopilar datos personales, como tu nombre, correo electrónico y otra información que proporciones al registrarte en nuestro sitio o interactuar con nuestros servicios.</p>
@@ -107,7 +109,7 @@
 
         <!-- Botón de regreso al inicio -->
         <div class="text-center mt-4">
-            <a href="{{ url('/') }}" class="btn btn-primary">Regresar al Inicio</a>
+            <a href="{{ url('/') }}" class="btn btn-outline-primary">Regresar al Inicio</a>
         </div>
     </div>
 

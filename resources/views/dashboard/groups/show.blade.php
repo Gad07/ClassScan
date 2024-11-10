@@ -14,8 +14,8 @@
     <h1 class="mt-4 text-primary">Información del Grupo</h1>
    
     <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-primary text-white d-flex align-items-center">
-            <h2 class="card-title mb-0 text-white"><i class="fas fa-users me-2"></i>{{ $group->name }}</h2>
+        <div class="card-header bg-primary text-white d-flex align-items-center bg-primay">
+            <h2 class="card-title mb-0 text-white bg-primary"><i class="fas fa-users me-2"></i>{{ $group->name }}</h2>
         </div>
         <div class="card-body bg-light">
             <div class="row g-3">
@@ -48,8 +48,8 @@
     <!-- Exportación de asistencia -->
     @if (Auth::user()->role == 'profesor' && $group->profesor_id == Auth::id())
     <div class="card mt-4">
-        <div class="card-header bg-secondary text-white">
-            <h5 class="card-title mb-0">Exportar Historial de Asistencias</h5>
+        <div class="card-header bg-primary text-white d-flex align-items-center">
+            <h2 class="card-title mb-0 text-white"> Exportación de Asistencias</h2>
         </div>
         <div class="card-body">
             <form method="GET" action="{{ route('groups.exportAttendanceHistory', $group->id) }}">
@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 <div class="mt-3">
-                    <button type="submit" class="btn btn-outline-success">Exportar Historial</button>
+                    <button type="submit" class="btn btn-outline-primary">Exportar Historial</button>
                 </div>
             </form>
         </div>
@@ -82,7 +82,7 @@
     <!-- Gráfica de Resumen de Asistencias -->
     @if (Auth::user()->role == 'profesor' && $group->profesor_id == Auth::id())
         <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-secondary text-white d-flex align-items-center">
+            <div class="card-header bg-primary text-white d-flex align-items-center">
                 <h3 class="card-title mb-0 text-white"><i class="fas fa-chart-bar me-2"></i>Resumen de Asistencias</h3>
             </div>
             <div class="card-body" style="height: 450px;">
@@ -120,7 +120,7 @@
     <!-- Lista de Alumnos y Opción para Agregar Alumnos -->
     @if (Auth::user()->role == 'profesor' && $group->profesor_id == Auth::id())
         <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-secondary text-white d-flex align-items-center">
+            <div class="card-header bg-primary text-white d-flex align-items-center">
                 <h3 class="card-title mb-0 text-white"><i class="fas fa-user-graduate me-2"></i>Alumnos en el Grupo</h3>
             </div>
             <div class="card-body">
@@ -140,7 +140,8 @@
                         <li class="list-group-item text-muted">No hay alumnos en este grupo.</li>
                     @endforelse
                 </ul>
-                <a href="{{ route('groups.addAlumnosForm', $group->id) }}" class="btn btn-primary mt-3">
+                <h3></h3>
+                <a href="{{ route('groups.addAlumnosForm', $group->id) }}" class="btn btn-outline-primary">
                     Agregar Alumnos
                 </a>
             </div>
@@ -150,12 +151,12 @@
     <!-- Código QR restaurado y funcional -->
     @if(Auth::user()->role == 'profesor')
         <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-info text-white d-flex align-items-center">
+            <div class="card-header bg-primary text-white d-flex align-items-center">
                 <h3 class="card-title mb-0 text-white"><i class="fas fa-qrcode me-2"></i>Pase de Lista con Código QR</h3>
             </div>
             <div class="card-body">
                 <p class="text-muted"></p>
-                <button id="generate-qr" class="btn btn-success mb-3">
+                <button id="generate-qr" class="btn btn-outline-primary">
                     Generar Código QR
                 </button>
                 <div id="qr-container" class="text-center" style="display: none;">
@@ -168,24 +169,25 @@
 
     @if(Auth::user()->role == 'profesor' && $group->profesor_id == Auth::id())
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="{{ route('groups.manualAttendance', $group->id) }}" class="btn btn-warning" id="manual-attendance" style="display: none;">
+            <a href="{{ route('groups.manualAttendance', $group->id) }}" class="btn btn-outline-primary" id="manual-attendance" style="display: none;">
                 Pase de Lista Manual
             </a>
         </div>
     @endif
 
     @if (Auth::user()->role == 'alumno')
-        <a href="{{ route('alumno.show', $group->id) }}" class="btn btn-info mb-3">
+        <a href="{{ route('alumno.show', $group->id) }}" class="btn btn-outline-primary">
             Ver Mi Información
         </a>
     @endif
 
     @if(Auth::user()->role == 'profesor' && $group->profesor_id == Auth::id())
-        <a href="{{ route('groups.index') }}" class="btn btn-danger">
+        <a href="{{ route('groups.index') }}" class="btn btn-outline-danger">
             Volver a la Lista de Grupos
         </a>
     @endif
 </div>
+
 <!-- Script para Chart.js y QR Management -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -453,16 +455,16 @@
                         label: "Asistencias",
                         data: data.attendance.slice(0, 4), // Usamos solo los datos correspondientes a esas categorías
                         backgroundColor: [
-                            "rgba(75, 192, 75, 0.8)",  // Verde para 'A Tiempo'
-                            "rgba(255, 206, 86, 0.8)",  // Amarillo para 'Retardo A'
-                            "rgba(255, 159, 64, 0.8)",  // Naranja para 'Retardo B'
-                            "rgba(255, 99, 132, 0.8)"   // Rojo para 'Falta'
+                            "rgba(75, 192, 122, 0.5)",  // Verde para 'A Tiempo'
+                            "rgba(255, 206, 86, 0.5)",  // Amarillo para 'Retardo A'
+                            "rgba(255, 159, 64, 0.5)",  // Naranja para 'Retardo B'
+                            "rgba(255, 99, 132, 0.5)"   // Rojo para 'Falta'
                         ],
                         borderColor: [
-                            "rgba(75, 192, 75, 1)",  // Borde verde para 'A Tiempo'
-                            "rgba(255, 206, 86, 1)",  // Borde amarillo para 'Retardo A'
-                            "rgba(255, 159, 64, 1)",  // Borde naranja para 'Retardo B'
-                            "rgba(255, 99, 132, 1)"   // Borde rojo para 'Falta'
+                            "rgba(75, 192, 122, 0.5)",  // Verde para 'A Tiempo'
+                            "rgba(255, 206, 86, 0.5)",  // Amarillo para 'Retardo A'
+                            "rgba(255, 159, 64, 0.5)",  // Naranja para 'Retardo B'
+                            "rgba(255, 99, 132, 0.5)"  // Borde rojo para 'Falta'
                         ],
                         borderWidth: 2
                     }]
@@ -574,24 +576,6 @@
                 return false;
             }
         }
-
-        document.getElementById('group-form').addEventListener('submit', async function (e) {
-            e.preventDefault();
-    
-            // Validar horarios seleccionados en tiempo real
-            if (!validarDias() || !validarHorario()) {
-                mostrarToast('Corrija los errores antes de continuar.', 'danger');
-                return;
-            }
-    
-            const esValido = await validarSuperposicion();
-            if (!esValido) {
-                return; // No proceder si hay conflicto de horarios
-            }
-    
-            // Enviar el formulario si todo es válido
-            this.submit();
-        });
 
     });
 </script>

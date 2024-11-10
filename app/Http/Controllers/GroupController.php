@@ -48,94 +48,94 @@ class GroupController extends Controller
     }
 
     public function store(Request $request)
-    {
-        // Convertir cadenas vacías a NULL
-        $request->merge([
-            'school_id' => $request->input('school_id') ?: null,
-            'new_school_name' => $request->input('new_school_name') ?: null,
-            'subject_id' => $request->input('subject_id') ?: null,
-            'new_subject_name' => $request->input('new_subject_name') ?: null,
-        ]);
+{
+    // Convertir cadenas vacías a NULL
+    $request->merge([
+        'school_id' => $request->input('school_id') ?: null,
+        'new_school_name' => $request->input('new_school_name') ?: null,
+        'subject_id' => $request->input('subject_id') ?: null,
+        'new_subject_name' => $request->input('new_subject_name') ?: null,
+    ]);
 
-        // Reglas de validación actualizadas
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'school_id' => 'required_without:new_school_name|nullable|exists:schools,id',
-            'new_school_name' => 'required_without:school_id|nullable|string|max:255',
-            'subject_id' => 'required_without:new_subject_name|nullable|exists:subjects,id',
-            'new_subject_name' => 'required_without:subject_id|nullable|string|max:255',
-            'class_days' => 'required|string|max:255',
-            'class_schedule' => 'required|string|max:255',
-            'school_period' => 'required|string|max:255',
-            'tolerance' => 'nullable|boolean',
-            'qr_interval' => 'required|integer|min:1',
-        ]);
+    // Reglas de validación actualizadas
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'school_id' => 'required_without:new_school_name|nullable|exists:schools,id',
+        'new_school_name' => 'required_without:school_id|nullable|string|max:255',
+        'subject_id' => 'required_without:new_subject_name|nullable|exists:subjects,id',
+        'new_subject_name' => 'required_without:subject_id|nullable|string|max:255',
+        'class_days' => 'required|string|max:255',
+        'class_schedule' => 'required|string|max:255',
+        'school_period' => 'required|string|max:255',
+        'tolerance' => 'nullable|boolean',
+        'qr_interval' => 'required|integer|min:1',
+    ]);
 
-        if (Auth::user()->role == User::ROLE_PROFESOR) {
-            // Extraer los días de clase y el horario
-            $classDays = explode(',', $validatedData['class_days']);
-            list($startTime, $endTime) = explode(' - ', $validatedData['class_schedule']);
+    if (Auth::user()->role == User::ROLE_PROFESOR) {
+        // Extraer los días de clase y el horario
+        $classDays = explode(',', $validatedData['class_days']);
+        list($startTime, $endTime) = explode(' - ', $validatedData['class_schedule']);
 
-            // Validar que no haya un horario superpuesto con los grupos existentes del profesor
-            $existingGroups = Group::where('profesor_id', Auth::id())
-                ->where(function ($query) use ($classDays) {
-                    foreach ($classDays as $day) {
-                        $query->orWhereRaw("FIND_IN_SET(?, class_days) > 0", [$day]);
-                    }
-                })
-                ->get();
-
-            foreach ($existingGroups as $group) {
-                list($existingStartTime, $existingEndTime) = explode(' - ', $group->class_schedule);
-                if (
-                    ($startTime < $existingEndTime && $endTime > $existingStartTime)
-                ) {
-                    return redirect()->back()->withErrors(['error' => 'El horario se superpone con otro grupo existente.']);
+        // Validar que no haya un horario superpuesto con los grupos existentes del profesor
+        $existingGroups = Group::where('profesor_id', Auth::id())
+            ->where(function ($query) use ($classDays) {
+                foreach ($classDays as $day) {
+                    $query->orWhereRaw("FIND_IN_SET(?, class_days) > 0", [$day]);
                 }
+            })
+            ->get();
+
+        foreach ($existingGroups as $group) {
+            list($existingStartTime, $existingEndTime) = explode(' - ', $group->class_schedule);
+            if (
+                ($startTime < $existingEndTime && $endTime > $existingStartTime)
+            ) {
+                return redirect()->back()->with('error', 'El horario se superpone con otro grupo existente.');
             }
-
-            // Manejo de nueva escuela
-            if ($validatedData['new_school_name']) {
-                $school = School::create(['name' => $validatedData['new_school_name']]);
-                $schoolId = $school->id;
-            } else {
-                $schoolId = $validatedData['school_id'];
-            }
-
-            // Manejo de nueva materia
-            if ($validatedData['new_subject_name']) {
-                $subject = Subject::create(['name' => $validatedData['new_subject_name']]);
-                $subjectId = $subject->id;
-            } else {
-                $subjectId = $validatedData['subject_id'];
-            }
-
-            // Asegurar que 'tolerance' sea booleano
-            $tolerance = $request->has('tolerance') ? true : false;
-
-            // Crear el grupo con los datos validados
-            $group = Group::create([
-                'name' => $validatedData['name'],
-                'profesor_id' => Auth::id(),
-                'school_id' => $schoolId,
-                'subject_id' => $subjectId,
-                'class_days' => $validatedData['class_days'],
-                'class_schedule' => $validatedData['class_schedule'],
-                'school_period' => $validatedData['school_period'],
-                'tolerance' => $tolerance,
-                'qr_interval' => $validatedData['qr_interval'],
-            ]);
-
-            // Agregar notificación para el profesor que ha creado el grupo
-            Notification::create([
-                'user_id' => Auth::id(),
-                'message' => 'Grupo "' . $group->name . '" creado exitosamente.',
-                'type' => 'success'
-            ]);
         }
 
-        return redirect()->route('groups.index')->with('success', 'Grupo creado exitosamente.');
+        // Manejo de nueva escuela
+        if ($validatedData['new_school_name']) {
+            $school = School::create(['name' => $validatedData['new_school_name']]);
+            $schoolId = $school->id;
+        } else {
+            $schoolId = $validatedData['school_id'];
+        }
+
+        // Manejo de nueva materia
+        if ($validatedData['new_subject_name']) {
+            $subject = Subject::create(['name' => $validatedData['new_subject_name']]);
+            $subjectId = $subject->id;
+        } else {
+            $subjectId = $validatedData['subject_id'];
+        }
+
+        // Asegurar que 'tolerance' sea booleano
+        $tolerance = $request->has('tolerance') ? true : false;
+
+        // Crear el grupo con los datos validados
+        $group = Group::create([
+            'name' => $validatedData['name'],
+            'profesor_id' => Auth::id(),
+            'school_id' => $schoolId,
+            'subject_id' => $subjectId,
+            'class_days' => $validatedData['class_days'],
+            'class_schedule' => $validatedData['class_schedule'],
+            'school_period' => $validatedData['school_period'],
+            'tolerance' => $tolerance,
+            'qr_interval' => $validatedData['qr_interval'],
+        ]);
+
+        // Agregar notificación para el profesor que ha creado el grupo
+        Notification::create([
+            'user_id' => Auth::id(),
+            'message' => 'Grupo "' . $group->name . '" creado exitosamente.',
+            'type' => 'success'
+        ]);
     }
+
+    return redirect()->route('groups.index')->with('success', 'Grupo creado exitosamente.');
+}
 
     public function edit($id)
     {
@@ -804,40 +804,42 @@ class GroupController extends Controller
         ]);
     }
     
-    public function validateGroup(Request $request)
-    {
-        $profesorId = Auth::id(); // ID del profesor autenticado
-        $selectedDays = explode(',', $request->class_days); // Días seleccionados
-        $startTime = $request->start_time;
-        $endTime = $request->end_time;
 
-        // Verificar si ya existe un grupo con el mismo nombre para el profesor
-        $groupNameExists = Group::where('name', $request->name)
-                                ->where('profesor_id', $profesorId)
-                                ->exists();
+public function validateGroup(Request $request)
+{
+    $profesorId = Auth::id(); // ID del profesor autenticado
+    $selectedDays = explode(',', $request->class_days); // Días seleccionados
+    $startTime = $request->start_time;
+    $endTime = $request->end_time;
 
-        // Verificar si hay un conflicto de horario
-        $scheduleConflict = Group::where('profesor_id', $profesorId)
-                                ->where(function ($query) use ($selectedDays) {
-                                    foreach ($selectedDays as $day) {
-                                        $query->orWhereJsonContains('class_days', $day); // Verifica días
-                                    }
-                                })
-                                ->where(function ($query) use ($startTime, $endTime) {
-                                    $query->whereBetween('start_time', [$startTime, $endTime])
-                                        ->orWhereBetween('end_time', [$startTime, $endTime])
-                                        ->orWhere(function ($subQuery) use ($startTime, $endTime) {
-                                            $subQuery->where('start_time', '<=', $startTime)
-                                                    ->where('end_time', '>=', $endTime);
-                                        });
-                                })
-                                ->exists();
+    // Verificar si ya existe un grupo con el mismo nombre para el profesor
+    $groupNameExists = Group::where('name', $request->name)
+                            ->where('profesor_id', $profesorId)
+                            ->exists();
 
-        return response()->json([
-            'nameExists' => $groupNameExists,
-            'scheduleConflict' => $scheduleConflict,
-        ]);
-    }
+    // Verificar si hay un conflicto de horario
+    $scheduleConflict = Group::where('profesor_id', $profesorId)
+                            ->where(function ($query) use ($selectedDays) {
+                                foreach ($selectedDays as $day) {
+                                    $query->orWhereRaw("FIND_IN_SET(?, class_days)", [$day]);
+                                }
+                            })
+                            ->where(function ($query) use ($startTime, $endTime) {
+                                $query->whereBetween('start_time', [$startTime, $endTime])
+                                    ->orWhereBetween('end_time', [$startTime, $endTime])
+                                    ->orWhere(function ($subQuery) use ($startTime, $endTime) {
+                                        $subQuery->where('start_time', '<=', $startTime)
+                                                ->where('end_time', '>=', $endTime);
+                                    });
+                            })
+                            ->exists();
+
+    return response()->json([
+        'nameExists' => $groupNameExists,
+        'scheduleConflict' => $scheduleConflict,
+    ]);
+}
+
     
     public function exportAttendanceHistory(Request $request, Group $group)
     {// Obtener los registros de asistencia del grupo
