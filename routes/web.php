@@ -14,6 +14,18 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\JustificanteController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentPaypalController;
+use Illuminate\Support\Facades\Mail;
+
+// Route::get('/test-email', function () {
+//     try {
+//         Mail::raw('Correo de prueba desde Laravel', function ($message) {
+//             $message->to('destinatario@correo.com')->subject('Correo de Prueba');
+//         });
+//         return 'Correo enviado con éxito';
+//     } catch (\Exception $e) {
+//         return 'Error al enviar el correo: ' . $e->getMessage();
+//     }
+// });
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 Route::get('/terms', function () {

@@ -21,6 +21,9 @@ use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendPasswordMail;
+
 
 class GroupController extends Controller
 {
@@ -464,7 +467,6 @@ class GroupController extends Controller
             'file' => 'required|mimes:xlsx,xls',
         ]);
 
-
         $filePath = $request->file('file')->getRealPath();
         $spreadsheet = IOFactory::load($filePath);
         $sheet = $spreadsheet->getActiveSheet();
@@ -479,20 +481,45 @@ class GroupController extends Controller
             }
 
             if (isset($data[1]) && filter_var($data[1], FILTER_VALIDATE_EMAIL)) {
+                // Genera una contraseña aleatoria y segura
+                $randomPassword = $this->generateSecurePassword(); // Llamada al método privado
                 $alumno = User::firstOrCreate(
                     ['email' => $data[1]], 
                     [
                         'name' => $data[0],   
                         'role' => User::ROLE_ALUMNO,
-                        'password' => bcrypt('defaultpassword'), 
+                        'password' => bcrypt($randomPassword),
                     ]
                 );
 
+                // Asocia el alumno al grupo
                 $group->alumnos()->syncWithoutDetaching($alumno->id);
+
+                // Envía el correo con la contraseña
+                Mail::to($alumno->email)->send(new SendPasswordMail($randomPassword));
             }
         }
 
-        return redirect()->route('groups.show', $group->id)->with('success', 'Alumnos importados correctamente');
+        return redirect()->route('groups.show', $group->id)->with('success', 'Alumnos importados correctamente y se enviaron las contraseñas por correo.');
+    }
+
+    // Definición de la función generateSecurePassword como un método privado
+    private function generateSecurePassword($length = 8)
+    {
+        $upper = Str::random(1); // Una letra mayúscula
+        $lower = strtolower(Str::random(1)); // Una letra minúscula
+        $number = rand(0, 9); // Un número
+        $specialCharacters = '@$!%*#?&';
+        $special = $specialCharacters[rand(0, strlen($specialCharacters) - 1)]; // Un carácter especial
+
+        // Generar los caracteres restantes de manera aleatoria
+        $remainingLength = $length - 4;
+        $randomString = Str::random($remainingLength);
+
+        // Combinar y mezclar todos los caracteres
+        $password = str_shuffle($upper . $lower . $number . $special . $randomString);
+
+        return $password;
     }
 
     
