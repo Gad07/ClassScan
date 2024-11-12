@@ -92,14 +92,14 @@
                                 <label class="form-check-label" for="remember">Recuérdame</label>
                             </div>
                             <div>
-                                <a href="{{ route('password.request') }}" class="text-decoration-none text-muted">¿Olvidaste tu contraseña?</a>
+                                <a href="{{ route('password.request') }}" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
                             </div>
                         </div>
 
                         
                         <!-- Sign In Button -->
                         <div class="mb-3">
-                            <button class="btn btn-primary w-100">Iniciar Sesión</button>
+                            <button class="btn btn-outline-primary w-100">Iniciar Sesión</button>
                         </div>
                         
                         <!-- Register Link -->

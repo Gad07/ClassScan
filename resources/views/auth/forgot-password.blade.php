@@ -87,8 +87,8 @@
 
                         <!-- Submit Button -->
                         <div class="d-flex justify-content-end mt-4">
-                            <button type="submit" class="btn btn-primary">
-                                Enviar enlace a Correo Electrónico
+                            <button type="submit" class="btn btn-outline-primary">
+                                Enviar enlace al correo electrónico
                             </button>
                         </div>
                     </form>

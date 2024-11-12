@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <div class="card shadow-sm border-0">
         <div class="card-header bg-primary text-white">
-            <h2 class="text-center mb-0">Editar Perfil</h2>
+            <h2 class="text-center mb-0 text-white">Editar Perfil</h2>
         </div>
         <div class="card-body">
             @if (session('status'))
@@ -42,7 +42,7 @@
 
                 <div class="form-group mb-4">
                     <label for="name" class="form-label font-weight-bold">Nombre</label>
-                    <input type="text" name="name" class="form-control form-control-lg" value="{{ $user->name }}" required>
+                    <input type="text" name="name" class="form-control form-control-lg" value="{{ $user->name }}" readonly>
                 </div>
 
                 <div class="form-group mb-4">

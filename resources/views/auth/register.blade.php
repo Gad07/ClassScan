@@ -113,7 +113,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="terms" id="terms" required>
                                 <label class="form-check-label" for="terms">
-                                    Acepto los <a href="#" class="text-decoration-none">términos y condiciones</a> y la <a href="{{ url('/terms') }}" class="text-decoration-none">política de privacidad</a>
+                                    Acepto los <a href="{{ url('/terms') }}" class="text-decoration-none">términos y condiciones</a> y la <a href="{{ url('/terms') }}" class="text-decoration-none">política de privacidad</a>
                                 </label>
                             </div>
                         </div>
@@ -123,7 +123,7 @@
                             <a class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100" href="{{ route('login') }}">
                                 ¿Tienes una cuenta?
                             </a>
-                            <button type="submit" class="btn btn-primary ms-4">
+                            <button type="submit" class="btn btn-outline-primary ms-4">
                                 Registrarse
                             </button>
                         </div>

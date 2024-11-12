@@ -56,13 +56,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::get('/dashboard-profesor', [DashboardController::class, 'profesorDashboard'])->name('dashboard-profesor')->middleware(['auth', CheckRole::class . ':profesor']);
 Route::get('/dashboard-alumno', [DashboardController::class, 'alumnoDashboard'])->name('dashboard-alumno')->middleware(['auth', CheckRole::class . ':alumno']);
 
-Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect()->route('dashboard');
-    }
-    return view('auth.login');
-})->name('login');
-
+Route::get('/', [AboutController::class, 'index'])->name('about');
 
 // Ruta de prueba para grupos
 Route::get('/test-groups', function () {
